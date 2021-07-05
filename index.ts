@@ -1,6 +1,7 @@
-// Import stylesheets
-import './style.css';
+import { Atelier } from './atelier';
 
-// Write TypeScript code!
-const appDiv: HTMLElement = document.getElementById('app');
-appDiv.innerHTML = `<h1>TypeScript Starter</h1>`;
+let atelierCanvas = document.getElementById(
+  'atelierCanvas'
+) as HTMLCanvasElement;
+
+new Atelier(atelierCanvas.getContext('2d'));
