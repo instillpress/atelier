@@ -7,7 +7,7 @@ export class Atelier {
     const width = this.context.canvas.width;
     const height = this.context.canvas.height;
 
-    this.context.fillStyle = 'black';
+    this.context.fillStyle = 'white';
     this.context.fillRect(0, 0, width, height);
   }
 }
