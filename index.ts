@@ -1,7 +1,7 @@
 import { Atelier } from './atelier';
 
-const atelierCanvas = document.getElementById(
-  'atelierCanvas'
-) as HTMLCanvasElement;
+import './style.css';
 
-new Atelier(atelierCanvas);
+const canvas = document.getElementById('atelier') as HTMLCanvasElement;
+
+new Atelier(canvas);
