@@ -1,19 +1,6 @@
 export class Atelier {
-  private context: CanvasRenderingContext2D;
-
-  constructor(canvas: HTMLCanvasElement) {
-    this.context = canvas.getContext('2d');
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      this.draw();
-    };
-
-    window.addEventListener('resize', resizeCanvas, false);
-
-    resizeCanvas();
+  constructor(public context: CanvasRenderingContext2D) {
+    this.draw();
   }
 
   draw() {
