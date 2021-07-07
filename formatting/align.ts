@@ -1,4 +1,4 @@
-import { AlignKind } from "./align-kind";
+import { AlignKind } from './align-kind';
 
 export interface Align {
   getAlign(): AlignKind;

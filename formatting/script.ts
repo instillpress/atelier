@@ -1,4 +1,4 @@
-import { ScriptKind } from "./script-kind";
+import { ScriptKind } from './script-kind';
 
 export interface Script {
   getScript(): ScriptKind;
