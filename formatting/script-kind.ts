@@ -1,4 +1,4 @@
-export enum AlignKind {
+export enum ScriptKind {
   Normal,
   Subscript,
   Superscript
