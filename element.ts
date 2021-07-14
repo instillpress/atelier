@@ -28,6 +28,10 @@ export class Element
     return this.content;
   }
 
+  setContent(content: string) {
+    this.content = content;
+  }
+
   getFontName() {
     return this.fontName;
   }
