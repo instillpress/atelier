@@ -1,6 +1,8 @@
 import { TextMeasurement } from './text-measurement';
 
 export class Text {
+  constructor(public text: string, public textMeasurement: TextMeasurement) {}
+
   static measureText(text: string, style: string) {
     let span: HTMLSpanElement = document.createElement('span');
     let block: HTMLDivElement = document.createElement('div');
@@ -32,7 +34,7 @@ export class Text {
       span.setAttribute('style', style);
 
       span.innerHTML = '';
-      
+
       const nbsp = String.fromCharCode(160);
 
       span.appendChild(document.createTextNode(text.replace(/\s/g, nbsp)));

@@ -1,12 +1,11 @@
-import { TextNode } from './text-node';
+import { Text } from './text';
 
 export class Word {
   constructor(
-    public prefix: TextNode,
-    public word: TextNode,
+    public prefix: Text,
+    public word: Text,
     public offset: number,
     public width: number,
-    public height: number,
-    public isLineBreak: boolean = false
+    public height: number
   ) {}
 }
