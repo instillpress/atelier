@@ -1,3 +1,6 @@
+import { Word } from './word';
+import { LineBreak } from './line-break';
+import { Text } from './text';
 import { Font } from './formatting/font';
 import { Color } from './formatting/color';
 import { Bold } from './formatting/bold';
@@ -10,89 +13,67 @@ import { Script } from './formatting/script';
 
 export class Element
   implements Font, Color, Bold, Underline, Strikeout, Align, Script {
-  private content: string;
-  private fontName: string = 'sans-serif';
-  private fontSize: number = 10;
-  private color: string = 'black';
-  private bold: boolean = false;
-  private underline: boolean = false;
-  private strikeout: boolean = false;
-  private align: AlignKind = AlignKind.Left;
-  private script: ScriptKind = ScriptKind.Normal;
+  constructor(
+    public content: string,
+    public words = new Array<Word | LineBreak>(),
+    public maxAscent: number = 0,
+    public maxDescent: number = 0,
+    public maxHeight: number = 0,
+    public fontName: string = 'sans-serif',
+    public fontSize: number = 10,
+    public color: string = 'black',
+    public bold: boolean = false,
+    public underline: boolean = false,
+    public strikeout: boolean = false,
+    public align: AlignKind = AlignKind.Left,
+    public script: ScriptKind = ScriptKind.Normal
+  ) {}
 
-  constructor(content: string) {
-    this.content = content;
+  addWord(prefix: string, word: string, offset: number) {
+    const prefixText = new Text(
+      prefix,
+      Text.measureText(prefix, this.fontName)
+    );
+    const wordText = new Text(word, Text.measureText(word, this.fontName));
+    const objectWord = new Word(prefixText, wordText);
+
+    objectWord.startOffset = offset;
+
+    if (prefix.length > 0) {
+      objectWord.startOffset -= prefix.length;
+    }
+
+    if (word.length > 0) {
+      objectWord.startOffset -= word.length;
+    }
+
+    objectWord.endOffset = offset;
+
+    objectWord.width =
+      objectWord.prefix.textMeasurement.width +
+      objectWord.word.textMeasurement.width;
+    objectWord.height = Math.max(
+      objectWord.prefix.textMeasurement.height,
+      objectWord.word.textMeasurement.height
+    );
+
+    this.maxAscent = Math.max(
+      this.maxAscent,
+      objectWord.word.textMeasurement.ascent
+    );
+    this.maxDescent = Math.max(
+      this.maxDescent,
+      objectWord.word.textMeasurement.descent
+    );
+
+    this.words.push(objectWord);
   }
 
-  getContent() {
-    return this.content;
+  addLineBreak() {
+    this.words.push(new LineBreak());
   }
 
-  setContent(content: string) {
-    this.content = content;
-  }
-
-  getFontName() {
-    return this.fontName;
-  }
-
-  setFontName(fontName: string) {
-    this.fontName = fontName;
-  }
-
-  getFontSize() {
-    return this.fontSize;
-  }
-
-  setFontSize(fontSize: number) {
-    this.fontSize = fontSize;
-  }
-
-  getColor() {
-    return this.color;
-  }
-
-  setColor(color: string) {
-    this.color = color;
-  }
-
-  getBold() {
-    return this.bold;
-  }
-
-  setBold(bold: boolean) {
-    this.bold = bold;
-  }
-
-  getUnderline() {
-    return this.underline;
-  }
-
-  setUnderline(underline: boolean) {
-    this.underline = underline;
-  }
-
-  getStrikeout() {
-    return this.strikeout;
-  }
-
-  setStrikeout(strikeout: boolean) {
-    this.strikeout = strikeout;
-  }
-
-  getAlign() {
-    return this.align;
-  }
-
-  setAlign(align: AlignKind) {
-    this.align = align;
-  }
-
-  getScript() {
-    return this.script;
-  }
-
-  setScript(script: ScriptKind) {
-    this.script = script;
+  clearWords() {
+    this.words = new Array<Word | LineBreak>();
   }
 }

@@ -1,1 +1,3 @@
-export interface LineBreak {}
+export class LineBreak {
+  constructor(lineBreak: boolean = true) {}
+}

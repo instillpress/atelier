@@ -2,7 +2,7 @@ import { Element } from './element';
 
 export class Document {
   private elements = new Array<Element>();
-  private current: Element = null;
+  private currentElement: Element = null;
 
   length() {
     return this.elements.length;
@@ -12,16 +12,16 @@ export class Document {
     return this.elements[index];
   }
 
-  getCurrentElement() {
-    if (this.current == null) {
-      this.current = new Element('');
-      this.elements.push(this.current);
+  current() {
+    if (this.currentElement == null) {
+      this.currentElement = new Element('');
+      this.elements.push(this.currentElement);
     }
 
-    return this.current;
+    return this.currentElement;
   }
 
-  getPreviousElement(element: Element) {
+  previous(element: Element) {
     let index = this.elements.indexOf(element);
 
     if (index >= 0 && index < this.elements.length) {
@@ -31,7 +31,7 @@ export class Document {
     return null;
   }
 
-  getNextElement(element: Element) {
+  next(element: Element) {
     let index = this.elements.indexOf(element);
 
     if (index >= 0 && index < this.elements.length - 1) {
@@ -41,7 +41,7 @@ export class Document {
     return null;
   }
 
-  removeElement(element: Element) {
+  remove(element: Element) {
     let index = this.elements.indexOf(element);
 
     if (index !== -1) {
@@ -49,36 +49,72 @@ export class Document {
     }
   }
 
-  splitElement(element: Element, offset: number) {
-    let newElement = new Element("");
+  split(element: Element, offset: number) {
+    let newElement = new Element('');
 
     let index = this.elements.indexOf(element);
     this.elements.splice(index + 1, 0, newElement);
 
-    newElement.setContent(element.getContent().substr(offset));
-    element.setContent(element.getContent().substr(0, offset));
+    newElement.content = element.content.substr(offset);
+    element.content = element.content.substr(0, offset);
 
-    this.rewordElement(element);
-    this.rewordElement(newElement);
+    this.parse(element);
+    this.parse(newElement);
 
     return newElement;
   }
 
-  insertElementAt(element: Element, location: Element) {
-    if (location.getContent().length === location.getOffset()) {
-      let index = this.elements.indexOf(location);
+  clean() {
+    let elements = new Array<Element>();
 
-      this.elements.splice(index + 1, 0, element);
-    } else if (location.getOffset() === 0) {
-      let index = this.elements.indexOf(location);
+    for (let i = 0; i < this.elements.length; ++i) {
+      let element = this.elements[i];
 
-      this.elements.splice(Math.min(index - 1, 0), 0, element);
-    } else {
-      this.splitElement(location, location.getOffset());
+      if (element.words.length > 0) {
+        elements.push(element);
+      }
+    }
 
-      let index = this.elements.indexOf(location);
+    this.elements = elements;
+  }
 
-      this.elements.splice(index + 1, 0, element);
+  private parse(element: Element) {
+    element.clearWords();
+    element.maxAscent = 0;
+    element.maxDescent = 0;
+    element.maxHeight = 0;
+
+    let prefix = '';
+    let word = '';
+
+    for (let i = 0; i < element.content.length; ++i) {
+      let character = element.content.charAt(i);
+
+      if (character === ' ') {
+        if (word.length > 0) {
+          element.addWord(prefix, word, i);
+
+          prefix = '';
+          word = '';
+        }
+
+        prefix += character;
+      } else if (character === '\n') {
+        if (prefix.length > 0 || word.length > 0) {
+          element.addWord(prefix, word, i);
+        }
+
+        element.addLineBreak();
+
+        prefix = '';
+        word = '';
+      } else {
+        word += character;
+      }
+    }
+
+    if (prefix.length > 0 || word.length > 0) {
+      element.addWord(prefix, word, element.content.length);
     }
   }
 }
